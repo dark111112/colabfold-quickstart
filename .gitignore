@@ -1,0 +1,12 @@
+results/
+outputs/
+*.pdb
+*.cif
+*.a3m
+*.json
+*.png
+*.log
+.pixi/
+.venv/
+__pycache__/
+.DS_Store
