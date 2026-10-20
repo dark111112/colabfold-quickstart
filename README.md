@@ -105,26 +105,37 @@ bash run_colabfoldbatch_sample.sh
 
 ### 4.1 FASTA 格式
 
-创建 `target.fasta`：
+第一次练习不需要自己寻找序列。本项目已经提供可直接运行的 [`examples/1BJP_1.fasta`](examples/1BJP_1.fasta)：
 
 ```fasta
->practice_protein
-MKT...替换为完整氨基酸序列...
+>1BJP_1
+PIAQIHILEGRSDEQKETLIREVSEAISRSLDAPLTSVRVIITEMAKGHFGIGGELASKVRR
 ```
 
-真实输入不能含省略号。请从 UniProt 或论文补充材料等可信来源复制完整蛋白序列。使用氨基酸单字母代码，不要放 DNA/RNA 序列、药材名称或 SMILES。建议标题简短以便识别输出。项目里的 [`examples/template.fasta`](examples/template.fasta) 只是格式模板，不能直接用于预测。
+这是 LocalColabFold 官方仓库使用的样例序列，对应 PDB 结构 [1BJP](https://www.rcsb.org/structure/1BJP) 中的 4-oxalocrotonate tautomerase。它只有 62 个氨基酸，适合验证安装和预测流程。PDB 记录中该蛋白的生物学组装体是同源六聚体；这里先预测一条单链，等单体流程跑通后再学习多聚体输入。
+
+以后使用自己的靶点时，再复制 [`examples/template.fasta`](examples/template.fasta) 并替换名称和序列。真实输入不能含省略号，须使用完整的蛋白质氨基酸序列。序列应使用标准氨基酸单字母代码，不要放 DNA/RNA 序列、药材名称或小分子 SMILES。
 
 ### 4.2 运行单体预测
 
+先进入从 GitHub 克隆下来的本项目目录。假设目录是 `~/colabfold-quickstart`：
+
 ```bash
-mkdir -p ~/colabfold-work/inputs ~/colabfold-work/results
-nano ~/colabfold-work/inputs/target.fasta
+cd ~/colabfold-quickstart
+mkdir -p results
 
 export LOCALCOLABFOLD_DIR="$HOME/software/localcolabfold"
 export PATH="$LOCALCOLABFOLD_DIR/.pixi/envs/default/bin:$PATH"
+
 CUDA_VISIBLE_DEVICES=0 colabfold_batch \
-  ~/colabfold-work/inputs/target.fasta \
-  ~/colabfold-work/results/target
+  examples/1BJP_1.fasta \
+  results/1BJP_1
+```
+
+预测完成后检查输出：
+
+```bash
+find results/1BJP_1 -maxdepth 1 -type f | sort
 ```
 
 默认流程会用 MMseqs2 公共服务生成 MSA，再在本地预测结构。可用选项参见 `colabfold_batch --help`。公共服务适合少量公开序列练习；不要提交未公开或敏感序列。若数据必须留在内网，需要配置本地 MSA 搜索和数据库。
@@ -215,6 +226,8 @@ JAX 可能在初始化时预留 GPU 内存，因此显示值不一定是模型�
 ## 参考资料
 
 - [LocalColabFold 官方仓库与安装说明](https://github.com/YoshitakaMo/localcolabfold)
+- [LocalColabFold 官方 1BJP 样例序列](https://github.com/YoshitakaMo/localcolabfold/blob/main/1BJP_1.fasta)
+- [RCSB PDB：1BJP 实验结构](https://www.rcsb.org/structure/1BJP)
 - [ColabFold 官方仓库](https://github.com/sokrypton/ColabFold)
 - [ColabFold 论文，Nature Methods (2022)](https://www.nature.com/articles/s41592-022-01488-1)
 - [AlphaFold Protein Structure Database](https://alphafold.ebi.ac.uk/)
